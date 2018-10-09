@@ -33,6 +33,10 @@ SQUIRRELMAXSPEED = 7 # fastest squirrel speed
 DIRCHANGEFREQ = 2    # % chance of direction change per frame
 LEFT = 'left'
 RIGHT = 'right'
+def drawCircle(x,y):
+    pos=pygame.mouse.get_pos()
+    return (pos[1] - y, pos[0]-x)
+    #pygame.draw.circle(DISPLAYSURF, RED, pos, 4)
 
 """
 This program has three data structures to represent the player, enemy squirrels, and grass background objects. The data structures are dictionaries with the following keys:
@@ -42,7 +46,7 @@ Keys used by all three data structures:
     'y' - the top edge coordinate of the object in the game world (not a pixel coordinate on the screen)
     'rect' - the pygame.Rect object representing where on the screen the object is located.
 Player data structure keys:
-    'surface' - the pygame.Surface object that stores the image of the squirrel which will be drawn to the screen.
+    'surface' - the pygame.Surface object that stores the image of the squirrel which will be fn to the screen.
     'facing' - either set to LEFT or RIGHT, stores which direction the player is facing.
     'size' - the width and height of the player in pixels. (The width & height are always the same.)
     'bounce' - represents at what point in a bounce the player is in. 0 means standing (no bounce), up to BOUNCERATE (the completion of the bounce)
@@ -138,9 +142,9 @@ def runGame():
             # move the squirrel, and adjust for their bounce
             sObj['x'] += sObj['movex']
             sObj['y'] += sObj['movey']
-            sObj['bounce'] += 1
-            if sObj['bounce'] > sObj['bouncerate']:
-                sObj['bounce'] = 0 # reset bounce amount
+            #sObj['bounce'] += 1
+            #if sObj['bounce'] > sObj['bouncerate']:
+            #   sObj['bounce'] = 0 # reset bounce amount
 
             # random chance they change direction
             if False: #random.randint(0, 99) < DIRCHANGEFREQ:
@@ -156,9 +160,10 @@ def runGame():
         for i in range(len(grassObjs) - 1, -1, -1):
             if isOutsideActiveArea(camerax, cameray, grassObjs[i]):
                 del grassObjs[i]
+        '''
         for i in range(len(squirrelObjs) - 1, -1, -1):
             if isOutsideActiveArea(camerax, cameray, squirrelObjs[i]):
-                del squirrelObjs[i]
+                del squirrelObjs[i]'''
 
         # add more grass & squirrels if we don't have enough.
         while len(grassObjs) < NUMGRASS:
@@ -196,6 +201,7 @@ def runGame():
                                          sObj['y'] - cameray - getBounceAmount(sObj['bounce'], sObj['bouncerate'], sObj['bounceheight']),
                                          sObj['width'],
                                          sObj['height']) )
+
             DISPLAYSURF.blit(sObj['surface'], sObj['rect'])
 
 
@@ -215,6 +221,10 @@ def runGame():
         for event in pygame.event.get(): # event handling loop
             if event.type == QUIT:
                 terminate()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    print("SHOTS FIRED")
+                    drawCircle()
 
             elif event.type == KEYDOWN:
                 if event.key in (K_UP, K_w):
