@@ -35,7 +35,7 @@ LEFT = 'left'
 RIGHT = 'right'
 def drawCircle(x,y):
     pos=pygame.mouse.get_pos()
-    return (pos[1] - y, pos[0]-x)
+    return (pos, (pos[1] - y), (pos[0]-x))
     #pygame.draw.circle(DISPLAYSURF, RED, pos, 4)
 
 """
@@ -168,7 +168,7 @@ def runGame():
         # add more grass & squirrels if we don't have enough.
         while len(grassObjs) < NUMGRASS:
             grassObjs.append(makeNewGrass(camerax, cameray))
-        while len(squirrelObjs) < NUMSQUIRRELS:
+        while 0:#len(squirrelObjs) < NUMSQUIRRELS:
             squirrelObjs.append(makeNewSquirrel(camerax, cameray))
 
         # adjust camerax and cameray if beyond the "camera slack"
@@ -197,12 +197,7 @@ def runGame():
 
         # draw the other squirrels
         for sObj in squirrelObjs:
-            sObj['rect'] = pygame.Rect( (sObj['x'] - camerax,
-                                         sObj['y'] - cameray - getBounceAmount(sObj['bounce'], sObj['bouncerate'], sObj['bounceheight']),
-                                         sObj['width'],
-                                         sObj['height']) )
-
-            DISPLAYSURF.blit(sObj['surface'], sObj['rect'])
+            pygame.draw.circle(DISPLAYSURF, RED, (sObj["x"],sObj["y"]), 4)
 
 
         # draw the player squirrel
@@ -224,7 +219,8 @@ def runGame():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     print("SHOTS FIRED")
-                    drawCircle()
+                    q = drawCircle(playerObj['x'],playerObj['y'])
+                    squirrelObjs.append({"x":q[0][0], "y":q[0][1], "movex": q[1], "movey":q[2]})
 
             elif event.type == KEYDOWN:
                 if event.key in (K_UP, K_w):
